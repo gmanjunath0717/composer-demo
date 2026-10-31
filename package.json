@@ -1,0 +1,14 @@
+{
+  "name": "card-composer",
+  "version": "0.1.0",
+  "description": "HTTP service that turns business card fields into a proof PNG and a print-ready PDF",
+  "private": true,
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test \"test/**/*.test.js\""
+  },
+  "engines": {
+    "node": ">=22.2"
+  }
+}

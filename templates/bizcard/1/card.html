@@ -1,0 +1,71 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>bizcard v1</title>
+<!--CARD_DATA-->
+<style>
+  /* Trim 3.5x2in = 336x192 css px. Print adds 0.125in bleed and a 0.25in slug for crop marks. */
+  @page { size: 4.25in 2.75in; margin: 0 }
+  html, body { margin: 0; padding: 0; background: #fff; overflow: hidden }
+  body { position: relative; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: #12355b }
+  body.proof { width: 336px; height: 192px }
+  body.print { width: 408px; height: 264px }
+  .trim { position: absolute; width: 336px; height: 192px }
+  body.proof .trim { left: 0; top: 0 }
+  body.print .trim { left: 36px; top: 36px }
+
+  /* Colour fields extend 12px (0.125in) past trim so a cut that drifts shows no white edge. */
+  .bar { position: absolute; left: -12px; right: -12px; top: -12px; height: 56px; background: #12355b }
+  .stripe { position: absolute; left: -12px; right: -12px; bottom: -12px; height: 16px; background: #c8102e }
+  .brand { position: absolute; left: 18px; top: 13px; font-size: 15px; font-weight: 800; letter-spacing: .14em; color: #fff }
+
+  .f { position: absolute; left: 18px; width: 300px; white-space: nowrap; overflow: hidden; line-height: 1.2 }
+  #name  { top: 58px;  font-weight: 700 }
+  #title { top: 84px;  color: #4a5b73 }
+  #phone { top: 128px }
+  #email { top: 144px }
+  #dept  { top: 15px; left: 168px; width: 150px; text-align: right; color: #fff; letter-spacing: .06em; text-transform: uppercase }
+
+  .mark { position: absolute; background: #000 }
+  body.proof .mark { display: none }
+</style>
+<body>
+  <div class="trim">
+    <div class="bar"></div>
+    <div class="stripe"></div>
+    <div class="brand">ACME</div>
+    <div class="f" id="dept"></div>
+    <div class="f" id="name"></div>
+    <div class="f" id="title"></div>
+    <div class="f" id="phone"></div>
+    <div class="f" id="email"></div>
+  </div>
+  <!-- crop marks sit in the slug, outside the bleed box (24px..384px x 24px..240px) -->
+  <div class="mark" style="left:6px;top:36px;width:12px;height:.5px"></div>
+  <div class="mark" style="left:6px;top:228px;width:12px;height:.5px"></div>
+  <div class="mark" style="left:390px;top:36px;width:12px;height:.5px"></div>
+  <div class="mark" style="left:390px;top:228px;width:12px;height:.5px"></div>
+  <div class="mark" style="left:36px;top:6px;width:.5px;height:12px"></div>
+  <div class="mark" style="left:372px;top:6px;width:.5px;height:12px"></div>
+  <div class="mark" style="left:36px;top:246px;width:.5px;height:12px"></div>
+  <div class="mark" style="left:372px;top:246px;width:.5px;height:12px"></div>
+<script>
+  // Copyfit: shrink each field from its max to its min font size (px) until it fits its box.
+  // A field that still overflows at the minimum is reported through body[data-overflow].
+  (function () {
+    var C = window.CARD, over = [];
+    document.body.className = C.mode;
+    var limits = { name: [20, 12], title: [11, 8], phone: [10, 7], email: [10, 7], dept: [9, 6] };
+    Object.keys(limits).forEach(function (k) {
+      var el = document.getElementById(k), size = limits[k][0], min = limits[k][1];
+      el.textContent = C.fields[k];
+      el.style.fontSize = size + 'px';
+      while (el.scrollWidth > el.clientWidth && size > min) {
+        size -= 0.5;
+        el.style.fontSize = size + 'px';
+      }
+      if (el.scrollWidth > el.clientWidth) over.push(k);
+    });
+    document.body.setAttribute('data-overflow', over.join(','));
+  })();
+</script>
+</body>
